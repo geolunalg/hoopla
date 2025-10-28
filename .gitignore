@@ -4,6 +4,8 @@
 
 # custome
 /data
+uv.lock
+cache/
 
 # Python-generated files
 __pycache__/
