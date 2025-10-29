@@ -2,7 +2,10 @@
 
 import argparse
 
-from lib.keyword_search import build_command, search_command
+from lib.keyword_search import (
+    build_command,
+    search_command,
+)
 
 
 def main() -> None:
