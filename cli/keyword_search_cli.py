@@ -24,45 +24,27 @@ def main() -> None:
     search_parser = subparsers.add_parser("search", help="Search movies using BM25")
     search_parser.add_argument("query", type=str, help="Search query")
 
-    tf_parser = subparsers.add_parser(
-        "tf", help="Get term frequency for a given document ID and term"
-    )
+    tf_parser = subparsers.add_parser("tf", help="Get term frequency for a given document ID and term")
     tf_parser.add_argument("doc_id", type=int, help="Document ID")
     tf_parser.add_argument("term", type=str, help="Term to get frequency for")
 
-    idf_parser = subparsers.add_parser(
-        "idf", help="Get inverse document frequency for a given term"
-    )
+    idf_parser = subparsers.add_parser("idf", help="Get inverse document frequency for a given term")
     idf_parser.add_argument("term", type=str, help="Term to get IDF for")
 
-    tf_idf_parser = subparsers.add_parser(
-        "tfidf", help="Get TF-IDF score for a given document ID and term"
-    )
+    tf_idf_parser = subparsers.add_parser("tfidf", help="Get TF-IDF score for a given document ID and term")
     tf_idf_parser.add_argument("doc_id", type=int, help="Document ID")
     tf_idf_parser.add_argument("term", type=str, help="Term to get TF-IDF score for")
 
-    bm25_idf_parser = subparsers.add_parser(
-        "bm25idf", help="Get BM25 IDF score for a given term"
-    )
-    bm25_idf_parser.add_argument(
-        "term", type=str, help="Term to get BM25 IDF score for"
-    )
+    bm25_idf_parser = subparsers.add_parser("bm25idf", help="Get BM25 IDF score for a given term")
+    bm25_idf_parser.add_argument("term", type=str, help="Term to get BM25 IDF score for")
 
-    bm25_tf_parser = subparsers.add_parser(
-        "bm25tf", help="Get BM25 TF score for a given document ID and term"
-    )
+    bm25_tf_parser = subparsers.add_parser("bm25tf", help="Get BM25 TF score for a given document ID and term")
     bm25_tf_parser.add_argument("doc_id", type=int, help="Document ID")
     bm25_tf_parser.add_argument("term", type=str, help="Term to get BM25 TF score for")
-    bm25_tf_parser.add_argument(
-        "k1", type=float, nargs="?", default=BM25_K1, help="Tunable BM25 K1 parameter"
-    )
-    bm25_tf_parser.add_argument(
-        "b", type=float, nargs="?", default=BM25_B, help="Tunable BM25 b parameter"
-    )
+    bm25_tf_parser.add_argument("k1", type=float, nargs="?", default=BM25_K1, help="Tunable BM25 K1 parameter")
+    bm25_tf_parser.add_argument("b", type=float, nargs="?", default=BM25_B, help="Tunable BM25 b parameter")
 
-    bm25search_parser = subparsers.add_parser(
-        "bm25search", help="Search movies using full BM25 scoring"
-    )
+    bm25search_parser = subparsers.add_parser("bm25search", help="Search movies using full BM25 scoring")
     bm25search_parser.add_argument("query", type=str, help="Search query")
 
     args = parser.parse_args()
