@@ -67,17 +67,13 @@ def main() -> None:
             print(f"Inverse document frequency of '{args.term}': {idf:.2f}")
         case "tfidf":
             tf_idf = tfidf_command(args.doc_id, args.term)
-            print(
-                f"TF-IDF score of '{args.term}' in document '{args.doc_id}': {tf_idf:.2f}"
-            )
+            print(f"TF-IDF score of '{args.term}' in document '{args.doc_id}': {tf_idf:.2f}")
         case "bm25idf":
             bm25idf = bm25_idf_command(args.term)
             print(f"BM25 IDF score of '{args.term}': {bm25idf:.2f}")
         case "bm25tf":
             bm25tf = bm25_tf_command(args.doc_id, args.term, args.k1)
-            print(
-                f"BM25 TF score of '{args.term}' in document '{args.doc_id}': {bm25tf:.2f}"
-            )
+            print(f"BM25 TF score of '{args.term}' in document '{args.doc_id}': {bm25tf:.2f}")
         case "bm25search":
             print("Searching for:", args.query)
             results = bm25search_command(args.query)
