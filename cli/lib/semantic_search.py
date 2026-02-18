@@ -187,12 +187,24 @@ def semantic_chunk(
     max_chunk_size: int = DEFAULT_SEMANTIC_CHUNK_SIZE,
     overlap: int = DEFAULT_CHUNK_OVERLAP,
 ) -> list[str]:
+    text = text.strip()
+    if text == "":
+        return []
+
     sentences = re.split(r"(?<=[.!?])\s+", text)
+
+    if len(sentences) == 1:
+        return sentences
+
     chunks = []
     i = 0
     n_sentences = len(sentences)
     while i < n_sentences:
         chunk_sentences = sentences[i: i + max_chunk_size]
+
+        if chunk_sentences == "":
+            continue
+
         if chunks and len(chunk_sentences) <= overlap:
             break
         chunks.append(" ".join(chunk_sentences))
@@ -323,6 +335,7 @@ def embed_chunks_command() -> np.ndarray:
     movies = load_movies()
     searcher = ChunkedSemanticSearch()
     return searcher.load_or_create_chunk_embeddings(movies)
+
 
 def search_chunked_command(query: str, limit: int = DEFAULT_SEARCH_LIMIT) -> dict:
     movies = load_movies()
