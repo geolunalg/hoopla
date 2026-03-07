@@ -54,7 +54,6 @@ def normalize_scores(scores: list[float]) -> list[float]:
     normalized_scores = []
     for s in scores:
         normalized_scores.append((s - min_score) / (max_score - min_score))
-
     return normalized_scores
 
 

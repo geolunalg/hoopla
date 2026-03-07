@@ -2,6 +2,9 @@
 .devcontainer
 .vscode
 
+# env variables
+.env
+
 # custome
 /data
 uv.lock
