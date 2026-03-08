@@ -188,6 +188,7 @@ def semantic_chunk(
     overlap: int = DEFAULT_CHUNK_OVERLAP,
 ) -> list[str]:
     text = text.strip()
+
     if not text:
         return []
 
@@ -236,6 +237,7 @@ class ChunkedSemanticSearch(SemanticSearch):
 
     def build_chunk_embeddings(self, documents: list[dict]) -> np.ndarray:
         self.documents = documents
+
         self.document_map = {}
         for doc in documents:
             self.document_map[doc["id"]] = doc
