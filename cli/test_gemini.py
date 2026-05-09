@@ -11,7 +11,7 @@ if not api_key:
 
 def main():
     client = genai.Client(api_key=api_key)
-    model = "gemma-3-27b-it"
+    model = "gemini-2.5-flash"
     prompt = "Why is Boot.dev such a great place to learn about RAG? Use one paragraph maximum."
 
     response = client.models.generate_content(model=model, contents=prompt)

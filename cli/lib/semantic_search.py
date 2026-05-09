@@ -38,7 +38,8 @@ class SemanticSearch:
         for doc in documents:
             self.document_map[doc["id"]] = doc
             movie_strings.append(f"{doc['title']}: {doc['description']}")
-        self.embeddings = self.model.encode(movie_strings, show_progress_bar=True)
+        self.embeddings = self.model.encode(
+            movie_strings, show_progress_bar=True)
 
         os.makedirs(os.path.dirname(MOVIE_EMBEDDINGS_PATH), exist_ok=True)
         np.save(MOVIE_EMBEDDINGS_PATH, self.embeddings)
@@ -129,7 +130,7 @@ def embed_query_text(query):
     search_instance = SemanticSearch()
     embedding = search_instance.generate_embedding(query)
     print(f"Query: {query}")
-    print(f"First 5 dimensions: {embedding[:3]}")
+    print(f"First 3 dimensions: {embedding[:3]}")
     print(f"Shape: {embedding.shape}")
 
 
@@ -208,8 +209,11 @@ def semantic_chunk(
 
         cleaned_sentences = []
         for chunk_sentence in chunk_sentences:
-            cleaned_sentences.append(chunk_sentence.strip())
+            chunk_sentence = chunk_sentence.strip()
+            if chunk_sentence:
+                cleaned_sentences.append(chunk_sentence)
         if not cleaned_sentences:
+            i += max_chunk_size - overlap
             continue
         chunk = " ".join(cleaned_sentences)
         chunks.append(chunk)
@@ -259,10 +263,12 @@ class ChunkedSemanticSearch(SemanticSearch):
             for i, chunk in enumerate(chunks):
                 all_chunks.append(chunk)
                 chunk_metadata.append(
-                    {"movie_idx": idx, "chunk_idx": i, "total_chunks": len(chunks)}
+                    {"movie_idx": idx, "chunk_idx": i,
+                        "total_chunks": len(chunks)}
                 )
 
-        self.chunk_embeddings = self.model.encode(all_chunks, show_progress_bar=True)
+        self.chunk_embeddings = self.model.encode(
+            all_chunks, show_progress_bar=True)
         self.chunk_metadata = chunk_metadata
 
         os.makedirs(os.path.dirname(CHUNK_EMBEDDINGS_PATH), exist_ok=True)
@@ -304,7 +310,7 @@ class ChunkedSemanticSearch(SemanticSearch):
             similarity = cosine_similarity(query_embedding, chunk_embedding)
             chunk_scores.append(
                 {
-                    "chunk_idx": i,
+                    "chunk_idx": self.chunk_metadata[i]["chunk_idx"],
                     "movie_idx": self.chunk_metadata[i]["movie_idx"],
                     "score": similarity,
                 }
@@ -319,7 +325,8 @@ class ChunkedSemanticSearch(SemanticSearch):
             ):
                 movie_scores[movie_idx] = chunk_score["score"]
 
-        sorted_movies = sorted(movie_scores.items(), key=lambda x: x[1], reverse=True)
+        sorted_movies = sorted(movie_scores.items(),
+                               key=lambda x: x[1], reverse=True)
 
         results = []
         for movie_idx, score in sorted_movies[:limit]:

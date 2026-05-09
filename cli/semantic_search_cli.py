@@ -17,9 +17,11 @@ from lib.semantic_search import (
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Semantic Search CLI")
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands")
 
-    subparsers.add_parser("verify", help="Verify that the embedding model is loaded")
+    subparsers.add_parser(
+        "verify", help="Verify that the embedding model is loaded")
 
     single_embed_parser = subparsers.add_parser(
         "embed_text", help="Generate an embedding for a single text"
@@ -31,7 +33,7 @@ def main() -> None:
     )
 
     embed_query_parser = subparsers.add_parser(
-        "embedquery", help="Generate an embedding for a search query"
+        "embed_query", help="Generate an embedding for a search query"
     )
     embed_query_parser.add_argument("query", type=str, help="Query to embed")
 
@@ -95,7 +97,7 @@ def main() -> None:
             embed_text(args.text)
         case "verify_embeddings":
             verify_embeddings()
-        case "embedquery":
+        case "embed_query":
             embed_query_text(args.query)
         case "search":
             semantic_search(args.query, args.limit)

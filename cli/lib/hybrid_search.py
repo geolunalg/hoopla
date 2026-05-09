@@ -32,14 +32,17 @@ class HybridSearch:
 
     def weighted_search(self, query: str, alpha: float, limit: int = 5) -> list[dict]:
         bm25_results = self._bm25_search(query, limit * 500)
-        semantic_results = self.semantic_search.search_chunks(query, limit * 500)
+        semantic_results = self.semantic_search.search_chunks(
+            query, limit * 500)
 
-        combined = combine_search_results(bm25_results, semantic_results, alpha)
+        combined = combine_search_results(
+            bm25_results, semantic_results, alpha)
         return combined[:limit]
 
     def rrf_search(self, query: str, k: int, limit: int = 10) -> list[dict]:
         bm25_results = self._bm25_search(query, limit * 500)
-        semantic_results = self.semantic_search.search_chunks(query, limit * 500)
+        semantic_results = self.semantic_search.search_chunks(
+            query, limit * 500)
 
         fused = reciprocal_rank_fusion(bm25_results, semantic_results, k)
         return fused[:limit]
@@ -113,7 +116,8 @@ def combine_search_results(
 
     hybrid_results = []
     for doc_id, data in combined_scores.items():
-        score_value = hybrid_score(data["bm25_score"], data["semantic_score"], alpha)
+        score_value = hybrid_score(
+            data["bm25_score"], data["semantic_score"], alpha)
         result = format_search_result(
             doc_id=doc_id,
             title=data["title"],

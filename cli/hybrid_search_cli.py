@@ -1,5 +1,6 @@
 import argparse
 
+from lib.evaluation import llm_judge_results
 from lib.hybrid_search import (
     normalize_scores,
     rrf_search_command,
@@ -9,7 +10,8 @@ from lib.hybrid_search import (
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Hybrid Search CLI")
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands")
 
     normalize_parser = subparsers.add_parser(
         "normalize", help="Normalize a list of scores"
@@ -57,6 +59,9 @@ def main() -> None:
     rrf_parser.add_argument(
         "--limit", type=int, default=5, help="Number of results to return (default=5)"
     )
+    rrf_parser.add_argument(
+        "--evaluate", action="store_true", help="Use LLM to evaluate result relevance"
+    )
 
     args = parser.parse_args()
 
@@ -66,7 +71,8 @@ def main() -> None:
             for score in normalized:
                 print(f"* {score:.4f}")
         case "weighted-search":
-            result = weighted_search_command(args.query, args.alpha, args.limit)
+            result = weighted_search_command(
+                args.query, args.alpha, args.limit)
 
             print(
                 f"Weighted Hybrid Search Results for '{result['query']}' (alpha={result['alpha']}):"
@@ -106,7 +112,8 @@ def main() -> None:
             for i, res in enumerate(result["results"], 1):
                 print(f"{i}. {res['title']}")
                 if "individual_score" in res:
-                    print(f"   Re-rank Score: {res.get('individual_score', 0):.3f}/10")
+                    print(
+                        f"   Re-rank Score: {res.get('individual_score', 0):.3f}/10")
                 if "batch_rank" in res:
                     print(f"   Re-rank Rank: {res.get('batch_rank', 0)}")
                 if "crossencoder_score" in res:
@@ -124,6 +131,14 @@ def main() -> None:
                     print(f"   {', '.join(ranks)}")
                 print(f"   {res['document'][:100]}...")
                 print()
+
+            if args.evaluate:
+                print("LLM Evaluation (0-3 relevance scale):")
+
+                llm_scores = llm_judge_results(args.query, result["results"])
+
+                for i, (res, score) in enumerate(zip(result["results"], llm_scores), 1):
+                    print(f"{i}. {res['title']}: {score}/3")
         case _:
             parser.print_help()
 

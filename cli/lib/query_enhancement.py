@@ -10,7 +10,7 @@ if not api_key:
     raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
 client = genai.Client(api_key=api_key)
-model = "gemma-3-27b-it"
+model = "gemini-2.5-flash"
 
 
 def spell_correct(query: str) -> str:

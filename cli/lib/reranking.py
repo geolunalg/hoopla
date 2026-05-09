@@ -12,7 +12,7 @@ if not api_key:
     raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
 client = genai.Client(api_key=api_key)
-model = "gemma-3-27b-it"
+model = "gemini-2.5-flash"
 cross_encoder = CrossEncoder("cross-encoder/ms-marco-TinyBERT-L2-v2")
 
 
@@ -94,7 +94,8 @@ def cross_encoder_rerank(
 ) -> list[dict]:
     pairs = []
     for doc in documents:
-        pairs.append([query, f"{doc.get('title', '')} - {doc.get('document', '')}"])
+        pairs.append(
+            [query, f"{doc.get('title', '')} - {doc.get('document', '')}"])
 
     scores = cross_encoder.predict(pairs)
 
