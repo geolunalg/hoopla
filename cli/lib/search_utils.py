@@ -1,6 +1,30 @@
 import json
 import os
-from typing import Any
+from typing import Any, TypedDict
+
+
+class Movie(TypedDict):
+    id: int
+    title: str
+    description: str
+
+
+class SearchResult(TypedDict):
+    id: int
+    title: str
+    document: str
+    score: float
+    metadata: dict[str, Any]
+
+
+class GoldenTestCase(TypedDict):
+    query: str
+    relevant_docs: list[str]
+
+
+class GoldenDataset(TypedDict):
+    test_cases: list[GoldenTestCase]
+
 
 DEFAULT_ALPHA = 0.5
 RRF_K = 60
@@ -29,20 +53,15 @@ CHUNK_EMBEDDINGS_PATH = os.path.join(CACHE_DIR, "chunk_embeddings.npy")
 CHUNK_METADATA_PATH = os.path.join(CACHE_DIR, "chunk_metadata.json")
 
 
-def load_movies() -> list[dict]:
+def load_movies() -> list[Movie]:
     with open(DATA_PATH, "r") as f:
         data = json.load(f)
     return data["movies"]
 
 
-def load_stopwords() -> list[str]:
-    with open(STOPWORDS_PATH, "r") as f:
-        return f.read().splitlines()
-
-
 def format_search_result(
-    doc_id: str, title: str, document: str, score: float, **metadata: Any
-) -> dict[str, Any]:
+    doc_id: int, title: str, document: str, score: float, **metadata: Any
+) -> SearchResult:
     """Create standardized search result
 
     Args:
@@ -64,6 +83,6 @@ def format_search_result(
     }
 
 
-def load_golden_dataset() -> dict:
+def load_golden_dataset() -> GoldenDataset:
     with open(GOLDEN_DATASET_PATH, "r") as f:
         return json.load(f)

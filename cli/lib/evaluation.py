@@ -1,15 +1,33 @@
 import json
 import os
+from typing import TypedDict
 
 from dotenv import load_dotenv
 from google import genai
 
 from .hybrid_search import HybridSearch
 from .search_utils import (
+    GoldenTestCase,
+    SearchResult,
     load_golden_dataset,
     load_movies,
 )
 from .semantic_search import SemanticSearch
+
+
+class QueryEvaluationResult(TypedDict):
+    precision: float
+    recall: float
+    f1_score: float
+    retrieved: list[str]
+    relevant: list[str]
+
+
+class EvaluationSummary(TypedDict):
+    test_cases_count: int
+    limit: int
+    results: dict[str, QueryEvaluationResult]
+
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -17,7 +35,7 @@ if not api_key:
     raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
 client = genai.Client(api_key=api_key)
-model = "gemini-2.5-flash"
+model = "gemma-4-31b-it"
 
 
 def precision_at_k(
@@ -44,11 +62,11 @@ def recall_at_k(
 
 def f1_score(precision: float, recall: float) -> float:
     if precision + recall == 0:
-        return 0
+        return 0.0
     return 2 * (precision * recall) / (precision + recall)
 
 
-def evaluate_command(limit: int = 5) -> dict:
+def evaluate_command(limit: int = 5) -> EvaluationSummary:
     movies = load_movies()
     golden_data = load_golden_dataset()
     test_cases = golden_data["test_cases"]
@@ -58,12 +76,12 @@ def evaluate_command(limit: int = 5) -> dict:
     hybrid_search = HybridSearch(movies)
 
     total_precision = 0
-    results_by_query = {}
+    results_by_query: dict[str, QueryEvaluationResult] = {}
     for test_case in test_cases:
         query = test_case["query"]
         relevant_docs = set(test_case["relevant_docs"])
         search_results = hybrid_search.rrf_search(query, k=60, limit=limit)
-        retrieved_docs = []
+        retrieved_docs: list[str] = []
         for result in search_results:
             title = result.get("title", "")
             if title:
@@ -90,12 +108,12 @@ def evaluate_command(limit: int = 5) -> dict:
     }
 
 
-def llm_judge_results(query: str, results: list[dict]) -> list[int]:
+def llm_judge_results(query: str, results: list[SearchResult]) -> list[int]:
     if not api_key:
         print("Warning: GEMINI_API_KEY not found. Skipping LLM evaluation.")
         return [0] * len(results)
 
-    formatted_results = []
+    formatted_results: list[str] = []
     for i, result in enumerate(results, 1):
         formatted_results.append(f"{i}. {result['title']}")
 

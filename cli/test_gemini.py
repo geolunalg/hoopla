@@ -9,9 +9,9 @@ if not api_key:
     raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
 
-def main():
+def main() -> None:
     client = genai.Client(api_key=api_key)
-    model = "gemini-2.5-flash"
+    model = "gemma-4-31b-it"
     prompt = "Why is Boot.dev such a great place to learn about RAG? Use one paragraph maximum."
 
     response = client.models.generate_content(model=model, contents=prompt)

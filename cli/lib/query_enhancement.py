@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Literal
 
 from dotenv import load_dotenv
 from google import genai
@@ -10,7 +10,7 @@ if not api_key:
     raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
 client = genai.Client(api_key=api_key)
-model = "gemini-2.5-flash"
+model = "gemma-4-31b-it"
 
 
 def spell_correct(query: str) -> str:
@@ -73,7 +73,9 @@ def expand_query(query: str) -> str:
     return f"{query} {expanded_terms}".strip()
 
 
-def enhance_query(query: str, method: Optional[str] = None) -> str:
+def enhance_query(
+    query: str, method: Literal["spell", "rewrite", "expand"] | None = None
+) -> str:
     match method:
         case "spell":
             return spell_correct(query)
